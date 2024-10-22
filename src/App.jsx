@@ -31,7 +31,6 @@ const App = () => {
     window.addEventListener("error", (e) =>
       console.error("Telegram WebApp error:", e)
     );
-    s;
   }, []);
 
   return (
