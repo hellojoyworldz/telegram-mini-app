@@ -1,20 +1,17 @@
 import { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import "./App.css";
 import SplashScreen from "./components/SplashScreen";
 import MainScreen from "./components/MainScreen";
 
 const App = () => {
   const [webApp, setWebApp] = useState(null);
-  const [showSplash, setShowSplash] = useState(true);
+  //const [showSplash, setShowSplash] = useState(true);
 
   const handleSplashComplete = () => {
-    setShowSplash(false);
+    //setShowSplash(false);
+    // 페이지를 새로고침하여 /main으로 이동
+    window.location.href = "/main";
   };
 
   useEffect(() => {
@@ -27,18 +24,13 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={<SplashScreen onComplete={handleSplashComplete} />}
-          />
-          <Route path="/main" element={<MainScreen webApp={webApp} />} />
-        </Routes>
-        {showSplash ? <Navigate to="/" /> : <Navigate to="/main" />}
-      </Router>
-    </>
+    <Routes>
+      <Route
+        path="/"
+        element={<SplashScreen onComplete={handleSplashComplete} />}
+      />
+      <Route path="/main" element={<MainScreen webApp={webApp} />} />
+    </Routes>
   );
 };
 
