@@ -1,9 +1,12 @@
+html {
+  background: #67b5cbff;
+}
+
 body {
   margin: 0;
-  padding: 0;
   width: 100vw;
   height: 100vh;
-  background: #f5ffd2ff;
+  background: #c5f2ffff;
 }
 
 #root {
