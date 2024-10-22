@@ -11,7 +11,7 @@ const App = () => {
   const handleSplashComplete = () => {
     //setShowSplash(false);
     // 페이지를 새로고침하여 /main으로 이동
-    window.location.href = "/main";
+    window.location.href = "https://telegram-miniapp-alpha.vercel.app/main";
   };
 
   useEffect(() => {
