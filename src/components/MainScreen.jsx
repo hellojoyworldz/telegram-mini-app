@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 
 const MainScreen = (webApp) => {
