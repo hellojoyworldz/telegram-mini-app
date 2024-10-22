@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
 import SplashScreen from "./components/SplashScreen";
 import MainScreen from "./components/MainScreen";
@@ -6,7 +12,6 @@ import MainScreen from "./components/MainScreen";
 const App = () => {
   const [webApp, setWebApp] = useState(null);
   const [showSplash, setShowSplash] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleSplashComplete = () => {
     setShowSplash(false);
@@ -19,24 +24,20 @@ const App = () => {
       tg.ready();
       tg.expand();
     }
-
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
   }, []);
 
-  if (!isLoaded) {
-    return null; // 또는 로딩 인디케이터를 표시할 수 있습니다.
-  }
   return (
     <>
-      {showSplash ? (
-        <SplashScreen onComplete={handleSplashComplete} />
-      ) : (
-        <MainScreen webApp={webApp} />
-      )}
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={<SplashScreen onComplete={handleSplashComplete} />}
+          />
+          <Route path="/main" element={<MainScreen webApp={webApp} />} />
+        </Routes>
+        {showSplash ? <Navigate to="/" /> : <Navigate to="/main" />}
+      </Router>
     </>
   );
 };
