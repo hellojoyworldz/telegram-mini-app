@@ -1,4 +1,4 @@
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import WebApp from "@twa-dev/sdk";
 import "./App.css";
@@ -7,7 +7,7 @@ import MainScreen from "./components/MainScreen";
 
 const App = () => {
   useEffect(() => {
-    if (window.Telegram && window.Telegram.WebApp {
+    if (window.Telegram && window.Telegram.WebApp) {
       WebApp.expand();
     }
   }, []);
