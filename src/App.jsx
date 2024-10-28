@@ -13,7 +13,7 @@ const App = () => {
       setTimeout(() => {
         WebApp.ready();
         WebApp.expand();
-      }, 100); // 100ms 딜레이
+      }, 1000);
     }
 
     setTimeout(() => setLoading(false), 3000);
