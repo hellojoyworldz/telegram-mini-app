@@ -5,17 +5,15 @@ import "./App.css";
 import SplashScreen from "./components/SplashScreen";
 import MainScreen from "./components/MainScreen";
 
+if (window.Telegram && window.Telegram?.WebApp) {
+  WebApp.ready();
+  WebApp.expand();
+}
+
 const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    window.onload = () => {
-      if (window.Telegram && window.Telegram?.WebApp) {
-        WebApp.ready();
-        WebApp.expand();
-      }
-    };
-
     setTimeout(() => setLoading(false), 3000);
   }, []);
 
