@@ -10,6 +10,7 @@ const App = () => {
 
   useEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
       WebApp.expand();
     }
 
