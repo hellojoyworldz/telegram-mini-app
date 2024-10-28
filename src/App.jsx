@@ -10,13 +10,10 @@ const App = () => {
 
   useEffect(() => {
     if (window.Telegram && window.Telegram?.WebApp) {
-      WebApp.setViewportHeight(100); // 초기값 설정
-      WebApp.onEvent("viewportChanged", () => {
-        WebApp.expand(); // viewport가 변경될 때마다 expand 호출
-      });
-
-      WebApp.ready();
-      WebApp.expand();
+      setTimeout(() => {
+        WebApp.ready();
+        WebApp.expand();
+      }, 100); // 100ms 딜레이
     }
 
     setTimeout(() => setLoading(false), 3000);
