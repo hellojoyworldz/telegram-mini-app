@@ -8,16 +8,25 @@ import MainScreen from "./components/MainScreen";
 const App = () => {
   const [loading, setLoading] = useState(true);
 
-  if (window.Telegram && window.Telegram?.WebApp) {
-    WebApp.expand();
-  }
-
   useEffect(() => {
+    if (window.Telegram && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      // 배경 색상 설정
+      window.Telegram.WebApp.setBackgroundColor("#000");
+      tg.expand();
+      tg.ready();
+    }
     setTimeout(() => {
-      WebApp.expand();
-      WebApp.ready();
       setLoading(false);
     }, 3000);
+
+    window.onload = () => {
+      if (window.Telegram && window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+      }
+    };
   }, []);
 
   return (

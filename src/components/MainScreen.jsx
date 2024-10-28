@@ -1,13 +1,6 @@
-import { useEffect } from "react";
-import WebApp from "@twa-dev/sdk";
 import { User } from "lucide-react";
 
 const MainScreen = () => {
-  useEffect(() => {
-    if (window.Telegram && window.Telegram?.WebApp) {
-      WebApp.expand();
-    }
-  }, []);
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-blue-500 text-white p-4">

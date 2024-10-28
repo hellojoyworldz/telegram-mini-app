@@ -1,13 +1,6 @@
-import { useEffect } from "react";
-import WebApp from "@twa-dev/sdk";
 import { Camera } from "lucide-react";
 
 const SplashScreen = () => {
-  useEffect(() => {
-    if (window.Telegram && window.Telegram?.WebApp) {
-      WebApp.expand();
-    }
-  }, []);
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-blue-500">
@@ -21,7 +14,6 @@ const SplashScreen = () => {
           </div>
         </div>
       </div>
-      <div style={{ marginTop: "800px" }}></div>
     </>
   );
 };
