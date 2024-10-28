@@ -13,7 +13,7 @@ const App = () => {
     if (window.Telegram && window.Telegram.WebApp) {
       WebApp.ready();
 
-      const frame = window.Telegram.WebApp.getFrameGeometry();
+      const frame = WebApp.getFrameGeometry();
       setFrameGeometry(frame); // 상태에 프레임 정보를 저장
 
       // UI를 프레임에 맞게 조정
