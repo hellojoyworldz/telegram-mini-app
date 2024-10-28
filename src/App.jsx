@@ -8,13 +8,10 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // if (window.Telegram && window.Telegram?.WebApp) {
-    //   const tg = window.Telegram.WebApp;
-    //   // 배경 색상 설정
-    //   //window.Telegram.WebApp.setBackgroundColor("#000");
-    //   tg.expand();
-    //   tg.ready();
-    // }
+    if (window.Telegram && window.Telegram?.WebApp) {
+      // 배경 색상 설정
+      window.Telegram.WebApp.setBackgroundColor("#000");
+    }
     setTimeout(() => {
       setLoading(false);
     }, 3000);
