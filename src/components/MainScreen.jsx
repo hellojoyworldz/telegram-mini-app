@@ -17,11 +17,6 @@ const MainScreen = () => {
           </p>
         </div>
       </main>
-      <img
-        src="https://www.sportsw.kr/news/data/20220720/p1065595744051940_612_thum.jpg"
-        alt="Telegram"
-        className="w-full h-32 object-cover"
-      />
     </div>
   );
 };
