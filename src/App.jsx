@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import WebApp from "@twa-dev/sdk";
+// mport WebApp from "@twa-dev/sdk";
 import "./App.css";
 import SplashScreen from "./components/SplashScreen";
 import MainScreen from "./components/MainScreen";
@@ -11,7 +11,7 @@ const App = () => {
   useEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.ready();
-      WebApp.expand();
+      window.Telegram.WebApp.expand();
     }
 
     setTimeout(() => setLoading(false), 3000);
