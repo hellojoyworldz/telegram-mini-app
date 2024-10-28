@@ -19,9 +19,10 @@ const App = () => {
       if (window.Telegram && window.Telegram?.WebApp) {
         WebApp.ready();
       }
-      // 4. 3초 후 스플래시 스크린 제거
-      setTimeout(() => setLoading(false), 3000);
     };
+
+    // 4. 3초 후 스플래시 스크린 제거
+    setTimeout(() => setLoading(false), 3000);
   }, []);
 
   return (
