@@ -14,13 +14,9 @@ const App = () => {
         WebApp.ready();
         WebApp.expand();
       }
-
-      setTimeout(() => setLoading(false), 3000);
     };
 
-    return () => {
-      window.onload = null;
-    };
+    setTimeout(() => setLoading(false), 3000);
   }, []);
 
   return (
