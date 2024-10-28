@@ -1,15 +1,6 @@
-import PropTypes from "prop-types";
-import { useEffect } from "react";
 import { Camera } from "lucide-react";
 
-const SplashScreen = ({ onComplete }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onComplete();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+const SplashScreen = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-blue-500">
@@ -24,10 +15,6 @@ const SplashScreen = ({ onComplete }) => {
       </div>
     </div>
   );
-};
-
-SplashScreen.propTypes = {
-  onComplete: PropTypes.func.isRequired,
 };
 
 export default SplashScreen;
