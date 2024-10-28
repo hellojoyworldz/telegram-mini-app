@@ -9,7 +9,9 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   useLayoutEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
+      WebApp.ready();
       WebApp.expand();
+      WebApp.enableClosingConfirmation();
     }
 
     setTimeout(() => setLoading(false), 3000);
