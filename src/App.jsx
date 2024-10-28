@@ -12,7 +12,7 @@ const App = () => {
     if (window.Telegram && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       // 배경 색상 설정
-      window.Telegram.WebApp.setBackgroundColor("#b7efff");
+      //window.Telegram.WebApp.setBackgroundColor("#000");
       tg.expand();
       tg.ready();
     }
