@@ -5,10 +5,6 @@ import "./App.css";
 import SplashScreen from "./components/SplashScreen";
 import MainScreen from "./components/MainScreen";
 
-// 즉시 UI 확장
-if (window.Telegram && window.Telegram?.WebApp) {
-  WebApp.expand();
-}
 const App = () => {
   const [loading, setLoading] = useState(true);
 
