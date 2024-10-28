@@ -12,8 +12,13 @@ if (window.Telegram && window.Telegram?.WebApp) {
 const App = () => {
   const [loading, setLoading] = useState(true);
 
+  if (window.Telegram && window.Telegram?.WebApp) {
+    WebApp.expand();
+  }
+
   useEffect(() => {
     setTimeout(() => {
+      WebApp.expand();
       WebApp.ready();
       setLoading(false);
     }, 3000);
