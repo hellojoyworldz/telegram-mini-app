@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import WebApp from "@twa-dev/sdk";
 import "./App.css";
@@ -7,7 +7,7 @@ import MainScreen from "./components/MainScreen";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
       WebApp.expand();
     }
