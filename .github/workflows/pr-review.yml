@@ -1,19 +1,88 @@
-name: Code Review
-
-permissions:
-  contents: read
-  pull-requests: write
+name: ChatGPT Code Review
 
 on:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
-  test:
+  code-review:
     runs-on: ubuntu-latest
     steps:
-      - uses: anc95/ChatGPT-CodeReview@main
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          echo "files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Get diff content
+        id: diff-content
+        run: |
+          DIFF_TEXT=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          echo "diff_text<<EOF" >> $GITHUB_ENV
+          echo "$DIFF_TEXT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: ChatGPT Code Review
+        uses: actions/github-script@v6
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGUAGE: Korean
+          DIFF_TEXT: ${{ env.diff_text }}
+        with:
+          script: |
+            const axios = require('axios');
+            
+            const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+            
+            async function getChatGPTReview(diffText) {
+              const prompt = `다음은 GitHub Pull Request의 코드 변경사항입니다. 
+              코드 리뷰를 진행해주세요. 
+              코드리뷰는 간결하고 불필요한 언급은 하지 않습니다.
+              
+              다음 사항들을 중점적으로 봐주세요:
+              성능 개선 가능성이나 코드 스타일 및 가독성 위주
+              
+              
+              변경사항:
+              ${diffText}`;
+            
+              try {
+                const response = await axios.post(
+                  OPENAI_API_URL,
+                  {
+                    model: 'gpt-4',
+                    messages: [
+                      {
+                        role: 'user',
+                        content: prompt
+                      }
+                    ],
+                    temperature: 0.7
+                  },
+                  {
+                    headers: {
+                      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                );
+            
+                return response.data.choices[0].message.content;
+              } catch (error) {
+                console.error('Error calling ChatGPT API:', error);
+                return 'ChatGPT API 호출 중 오류가 발생했습니다.';
+              }
+            }
+            
+            // Get review from ChatGPT
+            const review = await getChatGPTReview(process.env.DIFF_TEXT);
+            
+            // Post review as a comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## ChatGPT 코드 리뷰 결과\n\n${review}`
+            });
