@@ -12,15 +12,31 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install axios
+
       - name: Get changed files
         id: changed-files
         run: |
-          echo "files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          # 변경된 파일 중 실제 코드 파일만 필터링
+          echo "files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(js|jsx|ts|tsx|py|java|php|rb|go|cpp|cs|swift)$' | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
-      - name: Get diff content
+      - name: Get filtered diff content
         id: diff-content
         run: |
-          DIFF_TEXT=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          DIFF_TEXT=""
+          for file in ${{ steps.changed-files.outputs.files }}; do
+            ext="${file##*.}"
+            FILE_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | grep -v "^[-+]\s*\/\/" | grep -v "^[-+]\s*#" | grep -v "^[-+]\s*$")
+            if [ ! -z "$FILE_DIFF" ]; then
+              DIFF_TEXT="${DIFF_TEXT}\n\n=== $file ===\n${FILE_DIFF}"
+            fi
+          done
           echo "diff_text<<EOF" >> $GITHUB_ENV
           echo "$DIFF_TEXT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -37,13 +53,17 @@ jobs:
             const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
             
             async function getChatGPTReview(diffText) {
-              const prompt = `다음은 GitHub Pull Request의 코드 변경사항입니다. 
-              코드 리뷰를 진행해주세요. 
-              코드리뷰는 간결하고 불필요한 언급은 하지 않습니다.
-              
-              다음 사항들을 중점적으로 봐주세요:
-              성능 개선 가능성이나 코드 스타일 및 가독성 위주
-              
+              const prompt = `다음은 GitHub Pull Request의 주요 코드 변경사항입니다. 
+              중요한 문제점만 간단히 리뷰해주세요. 다음 사항들 중 문제가 있는 부분만 지적해주세요:
+
+              1. 심각한 버그나 에러 가능성
+              2. 명백한 성능 문제
+              3. 보안 취약점
+              4. 잠재적인 메모리 누수
+              5. 중요한 엣지 케이스 누락
+
+              불필요한 설명은 제외하고, 발견된 문제점만 간단히 bullet point로 작성해주세요.
+              문제가 없다면 "주요 문제점이 발견되지 않았습니다."라고만 답변해주세요.
               
               변경사항:
               ${diffText}`;
@@ -52,14 +72,15 @@ jobs:
                 const response = await axios.post(
                   OPENAI_API_URL,
                   {
-                    model: 'gpt-4',
+                    model: 'gpt-3.5-turbo',
                     messages: [
                       {
                         role: 'user',
                         content: prompt
                       }
                     ],
-                    temperature: 0.7
+                    temperature: 0.3,
+                    max_tokens: 500
                   },
                   {
                     headers: {
@@ -72,12 +93,24 @@ jobs:
                 return response.data.choices[0].message.content;
               } catch (error) {
                 console.error('Error calling ChatGPT API:', error);
-                return 'ChatGPT API 호출 중 오류가 발생했습니다.';
+                return '❌ ChatGPT API 호출 중 오류가 발생했습니다: ' + error.message;
               }
             }
             
+            // PR 크기가 너무 큰 경우 리뷰하지 않음
+            const diffText = process.env.DIFF_TEXT;
+            if (diffText.length > 5000) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '❗ 변경사항이 너무 큽니다. 더 작은 단위로 PR을 나누어주세요.'
+              });
+              return;
+            }
+            
             // Get review from ChatGPT
-            const review = await getChatGPTReview(process.env.DIFF_TEXT);
+            const review = await getChatGPTReview(diffText);
             
             // Post review as a comment
             await github.rest.issues.createComment({
